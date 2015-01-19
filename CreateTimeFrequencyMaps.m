@@ -14,7 +14,7 @@ function CreateTimeFrequencyMaps(events_list, dataset_path, ...
     
     % go over all the events (conditions) and product spectograms (in the
     % relevant electrodes
-    for event=5:8%size(events_list,2)
+    for event = events_list
         
        % divide the continuous data to epochs according to the relevant
        % duration
@@ -30,7 +30,7 @@ function CreateTimeFrequencyMaps(events_list, dataset_path, ...
        EEG_new.chanlocs=pop_chanedit(EEG_new.chanlocs, 'load',{ 'D:\MC\Kinesemes\Data\EEGData\ChannelsLocation.locs', 'filetype', 'autodetect'});
        init  = 1;
        num_of_electrodes = length(electrodes_list);
-       for elec = 13%:num_of_electrodes 
+       for elec = electrodes_list 
     
             %tmpsig = (EEG_new.icaweights(elec,:)*EEG_new.icasphere)*reshape(EEG_new.data(:,:,:), EEG_new.nbchan, size(EEG_new.data,2)*size(EEG_new.data,3));
             tmpsig = EEG_new.data(elec,:);

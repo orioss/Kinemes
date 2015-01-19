@@ -1,0 +1,52 @@
+function CalcDeltasFromFreqMaps(events_list, dataset_path, electrodes_list, calc_energies_MFCC_like)
+%% settings
+windowSize_delta = 9; % Odd number
+windowSize_delta_delta = 5; % Odd number
+
+%% create destination folders
+[pathstr, ~, ~] = fileparts(dataset_path);
+
+if calc_energies_MFCC_like
+    % Calc deltas from filttered spectograms into energy coefficients
+    spect_deltas_folder = [pathstr '\components\timef_deltas\'];
+    mkdir(spect_deltas_folder);
+
+    spect_folder = [pathstr '\components\timef_energies\'];
+else
+    % Calc detlas from orignial spectograms
+    spect_deltas_folder = [pathstr '\components\timef_deltas\'];
+    mkdir(spect_deltas_folder);
+
+    spect_folder = [pathstr '\components\timef\'];
+end
+
+%% Calc Deltas and save in new array
+for event = events_list
+    
+    % loads the relevant spectograms
+    load([spect_folder 'event_' num2str(event) '.mat'], 'allersp')
+    init = true;
+    
+    % Calc delta
+    for elec = electrodes_list
+        % create empty arrays if first electrode
+        if init  
+            allersp_deltas        = zeros(size(allersp));
+            allersp_deltas_deltas = zeros(size(allersp));
+            init = false;
+        end
+        
+        % Calc deltas and delta-deltas
+        allersp_deltas(:, :, elec)        = CalcDeltas(allersp(:,:, elec), windowSize_delta); % Data, window-size
+        allersp_deltas_deltas(:, :, elec) = CalcDeltas(deltas(allersp_deltas,5), windowSize_delta_delta);
+    end
+    
+    % save deltas and delta-deltas in new folder
+    save([spect_folder 'event_' num2str(event) '.mat'], 'allersp_deltas', 'allersp_deltas_deltas');
+    
+    % Clear from memory
+    clear 'allersp' 'allersp_deltas' 'allersp_deltas_deltas'
+    
+end
+    
+end
