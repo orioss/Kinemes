@@ -20,6 +20,11 @@ function [dataset_path] = EEGPreprocessing(relevant_events, ...
     % removes the non-relevant events
     EEG = pop_editeventvals( EEG, 'delete', non_relevant_events);
     
+    for i=1:size(EEG.event,2)
+        EEG.event(i).type = i;
+    end
+    
+    
     % saves the data set again
     pop_saveset(EEG,'filename',dataset_path)
     
@@ -32,7 +37,7 @@ function [dataset_path] = EEGPreprocessing(relevant_events, ...
     EEG = pop_reref(EEG, ref_electrodes);
     
     % run ICA
-    EEG = pop_runica(EEG,'Extended',1,'interupt','on')
+    %EEG = pop_runica(EEG,'Extended',1,'interupt','on')
     
     % saves the data set again
     pop_saveset(EEG,'filename',dataset_path)
